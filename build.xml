@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<project name="horizon-items" default="war">
+  
+  <property name="jboss.location" value="/data/dynix/hzapp/jboss"/>
+  
+  <property name="javax.jar" value="${jboss.location}/server/all/lib/javax.servlet.jar"/>
+  <property name="war.installdir" value="${jboss.location}/server/default/deploy/" />
+
+  <path id="compile.classpath">
+    <pathelement location="${javax.jar}"/>
+    <fileset dir="web/WEB-INF/lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+  
+
+
+  <target name="init">
+    <mkdir dir="build/classes"/>
+    <mkdir dir="dist" />
+  </target>
+    
+  <target name="compile" depends="init" >
+      <javac destdir="build/classes" debug="true" srcdir="src">
+          <classpath refid="compile.classpath"/>
+      </javac>
+  </target>
+  
+  <target name="war" depends="compile">
+      <war destfile="dist/items.war" webxml="web/WEB-INF/web.xml">
+          <fileset dir="web" excludes="WEB-INF/web.xml"/>
+          <classes dir="build/classes"/>
+      </war>
+  </target>
+  
+  <target name="install" depends="war">
+    <copy file="dist/items.war" tofile="${war.installdir}/items.war"/>
+  </target>
+  
+  <target name="clean">
+    <delete dir="dist" />
+    <delete dir="build" />
+  </target>
+  
+</project>

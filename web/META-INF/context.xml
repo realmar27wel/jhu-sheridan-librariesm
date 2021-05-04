@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/items">
+  <Resource name="horizon-opac" auth="Container"
+          type="javax.sql.DataSource" driverClassName="net.sourceforge.jtds.jdbc.Driver"
+          url="jdbc:jtds:sybase://SYBASEHOST.MYDOMIN.edu:2025/horizon;charset=cp850"
+          username="catalog" password="XXXXXX" maxActive="20" maxIdle="10"
+maxWait="-1"/>
+
+</Context>
