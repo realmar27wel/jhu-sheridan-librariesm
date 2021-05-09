@@ -75,7 +75,7 @@ public class ItemStatusToDlf extends Object {
       }
       
       //comma-seperated in properties file
-      String propString = properties.getProperty("holdings.dlf_status_availabile");
+      String propString = properties.getProperty("holdings.dlf_status_available");
       if ( propString != null ) {
         String[] a = propString.split(",");
         for( int i=0 ; i < a.length; i++ ) {
@@ -90,7 +90,7 @@ public class ItemStatusToDlf extends Object {
           itemStatusToDlf.put(a[i], "not available");
         }
       }
-      propString = properties.getProperty("holdings.dlf_status_possibly_availabile");
+      propString = properties.getProperty("holdings.dlf_status_possibly_available");
       if ( propString != null ) {
         String[] a = propString.split(",");
         for( int i=0 ; i < a.length; i++ ) {
