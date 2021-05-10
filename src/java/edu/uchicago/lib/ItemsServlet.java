@@ -65,7 +65,7 @@ public class ItemsServlet extends HttpServlet {
           System.err.println("Unable to load holdings.properties from path " + realPath + "/properties/");
         }
       
-        String dsn = appProperties.getProperty("holdings.datasource.name", "horizon-opac");
+        String dsn = appProperties.getProperty("holdings.datasource.name", "horizon-items");
       
         // Stupid check to see whether we're actually in HIP
         prefix = System.getProperty("dynix.context.ds.lookup.prefix");
@@ -74,12 +74,14 @@ public class ItemsServlet extends HttpServlet {
         // System.err.println("PREFIX: " + prefix);
         if (prefix != null) {
             //Running in HIP and JBoss
-            // System.out.println("Looks like we are running in HIP.");
+            System.out.println("Looks like we are running in HIP.");
             try {
                 ctx = getInitialContext();
                 prefix = System.getProperty("dynix.context.ds.lookup.prefix", "java:/");
-                ds = (DataSource)PortableRemoteObject.narrow(ctx.lookup(prefix + dsn), javax.sql.DataSource.class);
+                ds = (DataSource)PortableRemoteObject.narrow(ctx.lookup(prefix + dsn), javax.sql.DataSource.class);                                
                 realPath = config.getServletContext().getRealPath(".");
+                if (ds == null) 
+                  throw new Exception("Data source not found! : " + dsn);
             } catch (Exception e ) {
                 e.printStackTrace();
             }
@@ -92,7 +94,7 @@ public class ItemsServlet extends HttpServlet {
                     throw new Exception("Uh oh -- no context!");
                 }
                 
-                String name = "java:/comp/env/horizon-opac";
+                String name = "java:/comp/env/" + dsn;
                 System.out.println("Looking up " + name);
                 System.out.flush();
                 // ds = (DataSource) ctx.lookup( "java:/comp/env/catalog" );
@@ -101,7 +103,7 @@ public class ItemsServlet extends HttpServlet {
                 System.out.flush();
                 
                 if ( ds == null ) {
-                    throw new Exception("Data source not found!");
+                  throw new Exception("Data source not found! : " + name);
                 }
             } catch (Exception e ) {
                 e.printStackTrace();
@@ -270,7 +272,7 @@ public class ItemsServlet extends HttpServlet {
             e.printStackTrace();
         } finally {
             //close xml on finally?
-            if ( format.equals("uchicago")) {
+            if ( format.equals("dlfexpanded")) {
               out.print("</results>");
             }
             else {
@@ -439,6 +441,11 @@ public class ItemsServlet extends HttpServlet {
       //Item number in $p
       if ( itemNumber != null) {
         writeElt(out, "marc:subfield", itemNumber.toString(), "code", "p"); 
+      }
+      
+      //Note in public note $z
+      if ( note != null) {
+        writeElt(out, "marc:subfield", note, "code", "z"); 
       }
      
 
