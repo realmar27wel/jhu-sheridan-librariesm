@@ -25,11 +25,11 @@ import com.dynix.util.HtmlEncoder;
 public class SearchKey {
         // Parameter names
         protected static final String bibIdParmName =
-          ItemsServlet.appProperties.getProperty("holdings.queryKey.bibId", "bibId");
+          ItemsServlet.appProperties.getProperty("holdings.queryKey.bibId", "bib");
         protected static final String copyIdParmName =
-          ItemsServlet.appProperties.getProperty("holdings.queryKey.copyId", "copyId");
+          ItemsServlet.appProperties.getProperty("holdings.queryKey.copyId", "copy");
         protected static final String itemIdParmName = 
-          ItemsServlet.appProperties.getProperty("holdings.queryKey.itemId", "itemId");
+          ItemsServlet.appProperties.getProperty("holdings.queryKey.itemId", "item");
         protected static final String barcodeParmName = 
           ItemsServlet.appProperties.getProperty("holdings.queryKey.barcode", "barcode");
         // No build-in Type interface in java 1.4.2. *sigh*
