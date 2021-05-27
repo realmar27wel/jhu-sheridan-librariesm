@@ -157,7 +157,28 @@ public class ItemsServlet extends HttpServlet {
         if ( pathInfo != null ) {
           String[] pathComponents = pathInfo.split("/");
           //first component is null because the path starts with /
-          if (pathComponents.length >= 2) {
+          
+          //DLF getAvailability style?
+          if ( pathComponents[1].equals("availability")) {
+             String dlfKeyName = request.getParameter("id_type");
+             if (dlfKeyName == null) {
+               dlfKeyName = "bib";
+             }
+             String fieldName;
+             if ( dlfKeyName.equals("bib")) {
+               fieldName = SearchKey.bibIdParmName;
+             } else if (dlfKeyName.equals("item")) {
+               fieldName = SearchKey.itemIdParmName;
+             } else {
+               fieldName = dlfKeyName;
+             }
+             key = new SearchKey(fieldName, request.getParameter("id"));
+             if ( request.getParameter(formatParmName) != null && ! request.getParameter(formatParmName).equals("")) {
+              format = request.getParameter(formatParmName);
+             }  
+          }          
+          //REST style
+          else if (pathComponents.length >= 2) {
             keyName = pathComponents[1];            
             String[] leafParts = pathComponents[2].split("\\.");
             try {
