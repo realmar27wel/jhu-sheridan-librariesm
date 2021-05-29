@@ -293,7 +293,7 @@ public class ItemsServlet extends HttpServlet {
             e.printStackTrace();
         } finally {
             //close xml on finally?
-            if ( format.equals("dlfexpanded")) {
+            if ( format.equals("uchicago")) {
               out.print("</results>");
             }
             else {
