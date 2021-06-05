@@ -19,8 +19,6 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 import org.xml.sax.*;
 
-import com.dynix.util.HtmlEncoder;
-
 public class ItemDaia extends ItemFormat {
   public ItemDaia(ActionContext context) {
     super(context);
@@ -33,10 +31,10 @@ public class ItemDaia extends ItemFormat {
     // really have a URI for a Horizon bib. We can make one that will be
     // guaranteed unique, although it won't actually resolve in a
     // standard HIP setup. (it does at JHU). 
-    out.println("<daia:document id=\"" + HtmlEncoder.encode(context.uriForBib(item.bibId)) + "\">");
+    out.println("<daia:document id=\"" + Util.escapeXml(context.uriForBib(item.bibId)) + "\">");
     
     // And the individual item we're displaying now please. 
-    out.println("<daia:item id=\"" + HtmlEncoder.encode(context.uriForItem(item.itemId)) + 
+    out.println("<daia:item id=\"" + Util.escapeXml(context.uriForItem(item.itemId)) + 
       "\">");
     // We already have most of the info about this item elsewhere
     // in the package, but might as well repeat it as applicable.
@@ -50,7 +48,7 @@ public class ItemDaia extends ItemFormat {
     // to figure out if they're REALLY available. We will provide
     // a service for 'request', which is always listed as available,
     // just like in HIP. 
-    out.println("  <daia:available delay=\"unknown\" service=\"http://example.org/daia/request-service\" href=\"" + HtmlEncoder.encode(context.hipRequestUrl(item.bibId, item.itemId)) + "\"/>");
+    out.println("  <daia:available delay=\"unknown\" service=\"http://example.org/daia/request-service\" href=\"" + Util.escapeXml(context.hipRequestUrl(item.bibId, item.itemId)) + "\"/>");
     out.println("</daia:item>");
     
     

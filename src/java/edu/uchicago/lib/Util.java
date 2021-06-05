@@ -9,8 +9,6 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import com.dynix.util.HtmlEncoder;
-
 
 // Just some static util functions
 public class Util {
@@ -41,9 +39,9 @@ public class Util {
      return buf.toString();
    } 
    
-       // Take Horizon's "days since 1/1/1970" and "minutes since midnight" and
+    // Take Horizon's "days since 1/1/1970" and "minutes since midnight" and
     // combine into an ordinary java.util.Date object. 
-    public static java.util.Date parseDueDate(int due_date, int due_time) {
+    public static java.util.Date parseHorizonDate(int due_date, int due_time) {
       GregorianCalendar calendar = new GregorianCalendar(1970, Calendar.JANUARY, 1);
       calendar.add(Calendar.DAY_OF_MONTH , due_date);
       calendar.add(Calendar.MINUTE, due_time);
@@ -66,9 +64,9 @@ public class Util {
       }
     }
     
-        public static void writeElt(PrintWriter out, String name, String str) {
+  public static void writeElt(PrintWriter out, String name, String str) {
         if (str != null) {
-            str = HtmlEncoder.encode(str);
+            str = escapeXml(str);
             out.print('<');
             out.print(name);
             out.print('>');
@@ -79,7 +77,7 @@ public class Util {
             out.print('>');
         }
     }
-    
+        
     public static void writeElt(PrintWriter out, String name, int i) {
         out.print('<');
         out.print(name);
@@ -94,7 +92,7 @@ public class Util {
         if (str == null) {
             str = "";
         } else {
-            str = HtmlEncoder.encode(str);
+            str = escapeXml(str);
         }
         if (attrVal == null) {
             attrVal = "";
@@ -117,4 +115,17 @@ public class Util {
     public static String removeLastPathComponent(String input) {
       return input.substring(0, input.lastIndexOf('/'));
     }
+    
+    public static String escapeXml(String str) {
+      if (str == null) {
+        return "";
+      }
+      str = str.replaceAll("&","&amp;");
+      str = str.replaceAll("<","&lt;");
+      str = str.replaceAll(">","&gt;");
+      str = str.replaceAll("\"","&quot;");
+      str = str.replaceAll("'","&apos;");
+      return str;
+    }
+
 }

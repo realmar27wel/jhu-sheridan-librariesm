@@ -19,7 +19,6 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 import org.xml.sax.*;
 
-import com.dynix.util.HtmlEncoder;
 /*  An interface for classes that take some data from a Horizon query result
     set, and output some data string (usually XML fragment) to represent
     that. Kind of like a java Format, but doesn't parse/input, only outputs,

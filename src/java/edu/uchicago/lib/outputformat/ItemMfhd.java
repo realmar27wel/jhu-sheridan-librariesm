@@ -19,7 +19,6 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 import org.xml.sax.*;
 
-import com.dynix.util.HtmlEncoder;
 
 public class ItemMfhd extends ItemFormat {
   public ItemMfhd(ActionContext context) {

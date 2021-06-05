@@ -19,8 +19,6 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 import org.xml.sax.*;
 
-import com.dynix.util.HtmlEncoder;
-
 public class ItemSimpleAvailability extends ItemFormat {
   public ItemSimpleAvailability(ActionContext context) {
     super(context);
@@ -32,7 +30,7 @@ public class ItemSimpleAvailability extends ItemFormat {
       out.println("  <dlf:identifier>" + item.itemId + "</dlf:identifier>");          
       
       
-      out.println("  <dlf:location>" + HtmlEncoder.encode(item.locationName) + " -- " + HtmlEncoder.encode(item.collectionDescr) );      
+      out.println("  <dlf:location>" + Util.escapeXml(item.locationName) + " -- " + Util.escapeXml(item.collectionDescr) );      
       String callLabel = item.callNumber.simpleCallLabel();
       if ( callLabel != null ) {
           out.println(": " + callLabel);
@@ -41,7 +39,7 @@ public class ItemSimpleAvailability extends ItemFormat {
       
       
       out.println("  <dlf:availabilitystatus>" + ItemsServlet.itemStatusToDlfTranslator.itemStatusToDlf(item.itemStatus) + "</dlf:availabilitystatus>"); 
-      out.println("  <dlf:availabilitymsg>" + HtmlEncoder.encode(item.itemStatusDescr) + "</dlf:availabilitymsg>");
+      out.println("  <dlf:availabilitymsg>" + Util.escapeXml(item.itemStatusDescr) + "</dlf:availabilitymsg>");
       if ( item.dueDate != null) {
         out.println("  <dlf:dateavailable>" + Util.formatW3cDtf(item.dueDate, (item.due_time != 0)) +"</dlf:dateavailable>");
       }

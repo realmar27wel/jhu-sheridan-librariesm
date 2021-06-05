@@ -19,7 +19,6 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 import org.xml.sax.*;
 
-import com.dynix.util.HtmlEncoder;
 public class Item {
   public int itemId;
   public int copyId;
@@ -56,7 +55,7 @@ public class Item {
       due_date = rs.getInt("due_date");
       due_time = rs.getInt("due_time");      
       if ( due_date != 0 ) {
-          dueDate = Util.parseDueDate( rs.getInt("due_date"),rs.getInt("due_time")); 
+          dueDate = Util.parseHorizonDate( rs.getInt("due_date"),rs.getInt("due_time")); 
       }
       
       callNumberTypeCode = rs.getString("call_type");

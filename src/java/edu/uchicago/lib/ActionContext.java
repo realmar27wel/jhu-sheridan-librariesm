@@ -22,8 +22,6 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 import org.xml.sax.*;
 
-import com.dynix.util.HtmlEncoder;
-
 
 public class ActionContext {
   protected Connection conn;
