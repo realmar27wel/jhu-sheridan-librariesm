@@ -164,13 +164,13 @@ public class ItemsServlet extends HttpServlet {
              }
              String fieldName;
              if ( dlfKeyName.equals("bib")) {
-               fieldName = SearchKey.bibIdParmName;
+               fieldName = ItemSearchKey.bibIdParmName;
              } else if (dlfKeyName.equals("item")) {
-               fieldName = SearchKey.itemIdParmName;
+               fieldName = ItemSearchKey.itemIdParmName;
              } else {
                fieldName = dlfKeyName;
              }
-             key = new SearchKey(fieldName, request.getParameter("id"));
+             key = new ItemSearchKey(fieldName, request.getParameter("id"));
              if ( request.getParameter(formatParmName) != null && ! request.getParameter(formatParmName).equals("")) {
               format = request.getParameter(formatParmName);
              }  
@@ -180,7 +180,7 @@ public class ItemsServlet extends HttpServlet {
             keyName = pathComponents[1];            
             String[] leafParts = pathComponents[2].split("\\.");
             try {
-              key = new SearchKey(keyName, leafParts[0]);
+              key = new ItemSearchKey(keyName, leafParts[0]);
             } catch (IllegalArgumentException e) {
               response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
               return;
@@ -199,7 +199,7 @@ public class ItemsServlet extends HttpServlet {
           }
           
           Map parms = request.getParameterMap();
-          for (Iterator i = SearchKey.validKeys().iterator(); i.hasNext(); ){
+          for (Iterator i = ItemSearchKey.validItemKeys().iterator(); i.hasNext(); ){
             String keyCandidate = (String) i.next();
             if (parms.containsKey(keyCandidate)) {
               keyName = keyCandidate;
@@ -208,11 +208,11 @@ public class ItemsServlet extends HttpServlet {
           }
           if (keyName==null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-              "Missing required parameter, must contain one of: " + SearchKey.validKeys());
+              "Missing required parameter, must contain one of: " + ItemSearchKey.validItemKeys());
             return;
           }
           try {
-            key = new SearchKey(keyName, request.getParameter(keyName));
+            key = new ItemSearchKey(keyName, request.getParameter(keyName));
           } catch (IllegalArgumentException e) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, e.getMessage());
             return;
@@ -224,7 +224,7 @@ public class ItemsServlet extends HttpServlet {
         
         
         // Decide what to fetch from Horizon
-        if (key.field == SearchKey.itemIdParmName || key.field == SearchKey.barcodeParmName) {
+        if (key.field() == ItemSearchKey.itemIdParmName || key.field() == ItemSearchKey.barcodeParmName) {
           getDefault = false;
           getCopy = false;
           getItem = true;
@@ -260,8 +260,8 @@ public class ItemsServlet extends HttpServlet {
               // This is really only a valid DLF document if we have a bibID,
               // but its otherwise too hard to print out the 'bibliographic'
               // element.
-              if (key.field.equals(SearchKey.bibIdParmName)) {
-                out.print("  <dlf:bibliographic id=\"" + key.value + "\" />"); 
+              if (key.field().equals(ItemSearchKey.bibIdParmName)) {
+                out.print("  <dlf:bibliographic id=\"" + key.value() + "\" />"); 
               }
             }
             
@@ -281,7 +281,7 @@ public class ItemsServlet extends HttpServlet {
             }        
             if (fetchedCount == 0) {
                response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                 "Object not found: " + key.field + "=" + key.value);            
+                 "Object not found: " + key.field() + "=" + key.value());            
             }
         } catch( Exception e ) {
             System.err.println( e.getClass().getName() );
@@ -621,7 +621,7 @@ public class ItemsServlet extends HttpServlet {
             
             // Include subsidiary items if so configured
             if ( context.includeItems() ) {
-              List items = fetchItems(conn, new SearchKey(SearchKey.copyIdParmName, new Integer(copy.copyId).toString()));
+              List items = fetchItems(conn, new ItemSearchKey(ItemSearchKey.copyIdParmName, new Integer(copy.copyId).toString()));
               printItemsUchicago(context, out,  items);
             }
             
@@ -652,7 +652,7 @@ public class ItemsServlet extends HttpServlet {
                 + "and c.itype *= it.itype "
                 + "and c.call_type *= ct.call_type "
                 + "and staff_only != 1 "
-                + "and c." + key.column + " = ?";
+                + "and c." + key.column() + " = ?";
         
 
         PreparedStatement pstmt = conn.prepareStatement(copyStmt);
@@ -689,17 +689,17 @@ public class ItemsServlet extends HttpServlet {
         "  AND i.item_status *= ist.item_status " +
         "  AND i.itype *= it.itype " +
         "  AND i.call_type *= ct.call_type " +
-        "  AND i." + key.column + " = ?" + " " +
+        "  AND i." + key.column() + " = ?" + " " +
         "  AND i.staff_only=0");
       ArrayList result = new ArrayList();
       try {
-        if ( key.colType == SearchKey.INT) {
-          pstmt.setInt(1, key.val);
-        } else if (key.colType == SearchKey.STRING) {
-          pstmt.setString(1, key.value);
+        if ( key.colType() == SearchKey.INT) {
+          pstmt.setInt(1, key.val());
+        } else if (key.colType() == SearchKey.STRING) {
+          pstmt.setString(1, key.value());
         }
         else {
-          throw new RuntimeException("Unrecognized colType: " + key.colType);
+          throw new RuntimeException("Unrecognized colType: " + key.colType());
         }
                   
         ResultSet rs = pstmt.executeQuery();

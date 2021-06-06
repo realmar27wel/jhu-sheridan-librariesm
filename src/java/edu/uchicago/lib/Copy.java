@@ -73,7 +73,7 @@ public class Copy {
   
   // Return a SearchKey suitable for fetching items belonging to this copy.
   public SearchKey itemsSearchKey() {
-    return new SearchKey(SearchKey.copyIdParmName, new Integer(copyId).toString());
+    return new ItemSearchKey(ItemSearchKey.copyIdParmName, new Integer(copyId).toString());
   }
   
 }
