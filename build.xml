@@ -5,6 +5,7 @@
   
   <property name="javax.jar" value="${jboss.location}/server/all/lib/javax.servlet.jar"/>
   <property name="war.installdir" value="${jboss.location}/server/default/deploy/" />
+  <property name="war.name" value="items.war"/>
 
   <path id="compile.classpath">
     <pathelement location="${javax.jar}"/>
@@ -27,14 +28,14 @@
   </target>
   
   <target name="war" depends="compile">
-      <war destfile="dist/items.war" webxml="web/WEB-INF/web.xml">
+      <war destfile="dist/${war.name}" webxml="web/WEB-INF/web.xml">
           <fileset dir="web" excludes="WEB-INF/web.xml"/>
           <classes dir="build/classes"/>
       </war>
   </target>
   
   <target name="install" depends="war">
-    <copy file="dist/items.war" tofile="${war.installdir}/items.war"/>
+    <copy file="dist/${war.name}" tofile="${war.installdir}/${war.name}"/>
   </target>
   
   <target name="clean">
