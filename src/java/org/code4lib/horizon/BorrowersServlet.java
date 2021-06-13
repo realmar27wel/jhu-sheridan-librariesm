@@ -51,7 +51,7 @@ public class BorrowersServlet extends HttpServlet {
           System.err.println("Unable to load holdings.properties from path " + realPath + "/properties/");
         }
       
-        String dsn = appProperties.getProperty("borrowers.datasource.name", "horizon-items");
+        String dsn = appProperties.getProperty("horizon-extras.datasource.name", "horizon-extras");
       
         // Stupid check to see whether we're actually in HIP
         prefix = System.getProperty("dynix.context.ds.lookup.prefix");
