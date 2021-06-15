@@ -1,6 +1,4 @@
-
-
-package org.code4lib.horizon;
+package org.code4lib.horizon.borrowers;
 
 import edu.uchicago.lib.SearchKey;
 import edu.uchicago.lib.Util;

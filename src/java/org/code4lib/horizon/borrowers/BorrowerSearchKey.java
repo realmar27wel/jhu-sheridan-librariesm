@@ -1,4 +1,4 @@
-package org.code4lib.horizon;
+package org.code4lib.horizon.borrowers;
 
 import java.io.*;
 import java.net.*;
