@@ -11,7 +11,7 @@
 
   <path id="compile.classpath">
     <pathelement location="${javax.jar}"/>
-    <fileset dir="web/WEB-INF/lib">
+    <fileset dir="src/web/WEB-INF/lib">
       <include name="*.jar"/>
     </fileset>
   </path>
