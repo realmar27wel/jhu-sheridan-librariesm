@@ -131,7 +131,7 @@ public class ItemsServlet extends HttpServlet {
 
         // get params
         String keyName = null;
-        String format = appProperties.getProperty("holdings.default_format", "uchicago");; // uchicago or dlf_di
+        String format = appProperties.getProperty("holdings.default_format", "dlf_di");; // uchicago or dlf_di
 
         String debugStr = request.getParameter("debug");
         if (debugStr != null) {
