@@ -69,6 +69,19 @@ public class ActionContext {
     return includeItems.booleanValue();
   }
   
+  public String servletUrl() {
+    String scheme = request.getScheme();
+
+    String url = scheme + "://" + request.getServerName();
+    int port = request.getServerPort();
+    if ( !( ( port == 80 && scheme.equals("http")) || (port == 443 && scheme.equals("https")))) {
+      url += ":" + port;
+    }
+    url += request.getContextPath() + request.getServletPath();
+    
+    return url;
+  }
+  
   public URI hipUrl() {
     if (hipUrl == null) {
       try {
@@ -109,8 +122,8 @@ public class ActionContext {
       return template.replaceAll("\\%b", Integer.toString(bibId));
     }
     else {
-      //Default thingy
-      return Util.removeLastPathComponent(Util.removeLastPathComponent( hipUrl().toString() )) + "/bib/" + Integer.toString(bibId);
+      //Default thingy      
+      return servletUrl().toString() + "/" + ItemSearchKey.bibIdParmName + "/" + Integer.toString(bibId); 
     }
   }
   public String uriForItem(int itemId) {
@@ -120,8 +133,8 @@ public class ActionContext {
       return template.replaceAll("\\%i", Integer.toString(itemId));
     }
     else {
-      //Default thingy
-      return Util.removeLastPathComponent(Util.removeLastPathComponent( hipUrl().toString() )) + "/item/" + Integer.toString(itemId);
+      //Default thingy, point to ourselves.
+      return servletUrl().toString() + "/" + ItemSearchKey.itemIdParmName + "/" + Integer.toString(itemId);                                        
     }
   }
   public String uriForCopy(int copyId) {
@@ -131,8 +144,8 @@ public class ActionContext {
       return template.replaceAll("\\%c", Integer.toString(copyId));
     }
     else {
-      //Default thingy
-      return Util.removeLastPathComponent(Util.removeLastPathComponent( hipUrl().toString() )) + "/item/" + Integer.toString(copyId);
+      //Default thingy, point to ourselves. 
+      return servletUrl().toString() + "/" + ItemSearchKey.copyIdParmName + "/" + Integer.toString(copyId); 
     }
   }
   
