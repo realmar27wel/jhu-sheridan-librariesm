@@ -48,7 +48,7 @@ public class ItemDaia extends ItemFormat {
     // to figure out if they're REALLY available. We will provide
     // a service for 'request', which is always listed as available,
     // just like in HIP. 
-    out.println("  <daia:available delay=\"unknown\" service=\"http://example.org/daia/request-service\" href=\"" + Util.escapeXml(context.hipRequestUrl(item.bibId, item.itemId)) + "\"/>");
+    out.println("  <daia:available delay=\"unknown\" service=\"http://purl.org/NET/daia-ext/request\" href=\"" + Util.escapeXml(context.hipRequestUrl(item.bibId, item.itemId)) + "\"/>");
     out.println("</daia:item>");
     
     
