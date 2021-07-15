@@ -16,7 +16,7 @@
       
     <servlet-mapping>
         <servlet-name>items</servlet-name>
-        <url-pattern>/items/*</url-pattern>
+        <url-pattern>/holdings/*</url-pattern>
     </servlet-mapping>
     
     <servlet-mapping>
