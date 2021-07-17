@@ -78,7 +78,7 @@ public class SearchKey {
             } else {
                 throw new RuntimeException("Impossible colType: " + this.keyInfo.colType);
             }
-            System.out.println("SearchKey = " + this);
+            //System.out.println(this);
         }
         
         public String join() {
