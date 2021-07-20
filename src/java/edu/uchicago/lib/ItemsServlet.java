@@ -48,6 +48,8 @@ public class ItemsServlet extends HttpServlet {
     //hash that maps from internal Horizon item status to DLF availability status code
     public static ItemStatusToDlf itemStatusToDlfTranslator = null;
     
+    public static final String dlfXmlApparatus = "  xmlns:dlf=\"http://diglib.org/ilsdi/1.1\"  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://diglib.org/ilsdi/1.1 http://www.diglib.org/architectures/ilsdi/schemas/1.1/dlfexpanded.xsd\" ";
+    
     // Hash mapping horizon status codes map to dlf:availabilty types
     //private static java.util.HashMap istatusToDlf = null;
         
@@ -127,10 +129,10 @@ public class ItemsServlet extends HttpServlet {
         boolean debug = false;
 
         
-        
 
         // get params
-        String keyName = null;
+        String keyStr = null;
+        String valueStr = null;
         String format = appProperties.getProperty("holdings.default_format", "dlfexpanded");; // uchicago or dlf_di
 
         String debugStr = request.getParameter("debug");
@@ -147,9 +149,7 @@ public class ItemsServlet extends HttpServlet {
         if (getCopyStr != null) {
             getCopy = Boolean.valueOf(getCopyStr).booleanValue();
         }
-        
-        SearchKey key = null;
-        
+                       
         //Get paramters from path-style instead of query-param-style
         String pathInfo = request.getPathInfo();  
         if ( pathInfo != null ) {
@@ -170,21 +170,19 @@ public class ItemsServlet extends HttpServlet {
              } else {
                fieldName = dlfKeyName;
              }
-             key = new ItemSearchKey(fieldName, request.getParameter("id"));
+             keyStr = fieldName;
+             valueStr = request.getParameter("id");
+                          
              if ( request.getParameter(formatParmName) != null && ! request.getParameter(formatParmName).equals("")) {
               format = request.getParameter(formatParmName);
              }  
           }          
           //REST style
           else if (pathComponents.length >= 2) {
-            keyName = pathComponents[1];            
+            keyStr = pathComponents[1];            
             String[] leafParts = pathComponents[2].split("\\.");
-            try {
-              key = new ItemSearchKey(keyName, leafParts[0]);
-            } catch (IllegalArgumentException e) {
-              response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-              return;
-            } 
+            valueStr = leafParts[0];
+             
             if ( leafParts.length > 1) {
               format = leafParts[1]; 
             }
@@ -193,7 +191,7 @@ public class ItemsServlet extends HttpServlet {
         
         // Get parameters from query-param style only if we don't already
         // have them from path.         
-        if ( key == null ) {
+        if ( keyStr == null ) {
           if ( request.getParameter(formatParmName) != null && ! request.getParameter(formatParmName).equals("")) {
             format = request.getParameter(formatParmName);
           }
@@ -202,21 +200,16 @@ public class ItemsServlet extends HttpServlet {
           for (Iterator i = ItemSearchKey.validItemKeys().iterator(); i.hasNext(); ){
             String keyCandidate = (String) i.next();
             if (parms.containsKey(keyCandidate)) {
-              keyName = keyCandidate;
+              keyStr = keyCandidate;
               break;
             }
           }
-          if (keyName==null) {
+          if (keyStr==null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST,
               "Missing required parameter, must contain one of: " + ItemSearchKey.validItemKeys());
             return;
-          }
-          try {
-            key = new ItemSearchKey(keyName, request.getParameter(keyName));
-          } catch (IllegalArgumentException e) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, e.getMessage());
-            return;
-          }    
+          }            
+            valueStr = request.getParameter(keyStr);    
         }
         
         //System.out.println("SearchKey = " + keyName);
@@ -224,7 +217,7 @@ public class ItemsServlet extends HttpServlet {
         
         
         // Decide what to fetch from Horizon
-        if (key.field() == ItemSearchKey.itemIdParmName || key.field() == ItemSearchKey.barcodeParmName) {
+        if (keyStr == ItemSearchKey.itemIdParmName || keyStr == ItemSearchKey.barcodeParmName) {
           getDefault = false;
           getCopy = false;
           getItem = true;
@@ -240,76 +233,138 @@ public class ItemsServlet extends HttpServlet {
         }
 
         
+        
         response.setContentType("text/xml;charset=UTF-8");
         PrintWriter out = response.getWriter();
         out.print("<?xml version='1.0' encoding='UTF-8'?>");
         
-        // java.lang.System.getProperties().list(System.err);
+        // java.lang.System.getProperties().list(System.err);        
         
-        try {
+          //We might have multiple values, split and loop 
+          String[] values = valueStr.split(",");
+          try {
             conn = ds.getConnection();
-            
+              
             ActionContext context = new ActionContext(conn, request, appProperties);
+              
+
             
-            
-            if ( format.equals("uchicago")) {
-              out.print("<results>");
-            }
-            else {
-              out.print("<dlf:record xmlns:dlf=\"http://diglib.org/ilsdi/1.1\"  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://diglib.org/ilsdi/1.1 http://www.diglib.org/architectures/ilsdi/schemas/1.1/dlfexpanded.xsd\">");
-              // This is really only a valid DLF document if we have a bibID,
-              // but its otherwise too hard to print out the 'bibliographic'
-              // element.
-              if (key.field().equals(ItemSearchKey.bibIdParmName)) {
-                out.print("  <dlf:bibliographic id=\"" + key.value() + "\" />"); 
+            // If we have multiples, need to open it up with an aggregator
+            // element. 
+            boolean dlfApparatusPrinted = false;
+            if ( values.length > 1 ) {
+              if (format.equals("uchicago")) {
+                 out.print("<results>");
+              }
+              else {
+                out.print("<dlf:collection" +dlfXmlApparatus + ">\n");
+                dlfApparatusPrinted = true;
               }
             }
             
-            int fetchedCount = 0;
-            if (getDefault) {
-                fetchedCount = getCopies(context, out, key, format);
-                if (fetchedCount == 0) {
-                    fetchedCount = getItems(context, out, key, format);
-                }
-            } else {
-                if (getCopy) {
-                    fetchedCount = getCopies(context, out, key, format);
-                }
-                if (getItem) {
-                    fetchedCount = getItems(context, out, key, format);
-                }
-            }        
-            if (fetchedCount == 0) {
-               response.sendError(HttpServletResponse.SC_NOT_FOUND,
-                 "Object not found: " + key.field() + "=" + key.value());            
-            }
-        } catch( Exception e ) {
-            System.err.println( e.getClass().getName() );
-            out.print("<error class=\"" + e.getClass().getName() + "\">");
-            out.print("  <message>" + e.getMessage() + "</message>");
-            out.print("</error>");
-            e.printStackTrace();
-        } finally {
-            //close xml on finally?
-            if ( format.equals("uchicago")) {
-              out.print("</results>");
-            }
-            else {
-              out.print("</dlf:record>");
-            }
+            for (int i = 0; i < values.length ; i++) {
+              String value = values[i];
+              SearchKey key = new ItemSearchKey(keyStr, value);
+              try {
 
-            try {
-              conn.close();
-            } catch(Exception e) {
-              System.err.println("Problem closing HIP connection?");
+                int fetchedCount = 0;
+                List copies = new ArrayList();
+                List items = new ArrayList();
+                if (getDefault) {
+                    copies = fetchCopies(context.connection(), key);                     
+                    if (copies.size() == 0 ) {                      
+                      items = fetchItems(context.connection(), key);                                              
+                    }
+                } else {
+                    if (getCopy) {
+                      copies = fetchCopies(context.connection(), key);                        
+                    }
+                    if (getItem) {
+                      items = fetchItems(context.connection(), key);                      
+                    }
+                }
+
+                //intro XML 
+                if (copies.size() > 0 || items.size() > 0) {
+                  if ( format.equals("uchicago")) {
+                    out.print("<result>\n");
+                  }
+                  else {
+                    out.print("<dlf:record");
+                    if (! dlfApparatusPrinted) { out.print(dlfXmlApparatus); }
+                    out.print(">\n");
+                    // This is really only a valid DLF document if we have a bibID,
+                    // but its otherwise too hard to print out the 'bibliographic'
+                    // element.
+                    if (key.field().equals(ItemSearchKey.bibIdParmName)) {
+                      out.print("  <dlf:bibliographic id=\"" + key.value() + "\" />"); 
+                    }
+                  }
+                }
+                
+                
+                //meat
+                if (copies.size() > 0 ) {
+                  printCopies(context, out, copies, format); 
+                }
+                if (items.size() > 0 ) {
+                  printItems(context, out, items, format); 
+                }
+                
+                //closing XML
+                if (copies.size() > 0 || items.size() > 0) {
+                  if (format.equals("uchicago")) {
+                    out.print("</result>");
+                  }
+                  else {
+                    out.print("</dlf:record>\n");                    
+                  }                                
+                }
+                //no results is an error iff we had a single-id request
+                else if (values.length == 1) {                  
+                  out.print("<error status=\"404\"><message>Object not found: " + key.field() + "=" + key.value() + "</message></error>");
+                   response.setStatus(HttpServletResponse.SC_NOT_FOUND);                                 
+                }
+              }
+              finally {
+
+              }
+            }
+          } catch( Exception e ) {
+              System.err.println( e.getClass().getName() );
+              out.print("<error class=\"" + e.getClass().getName() + "\">");
+              out.print("  <message>" + e.getMessage() + "</message>");
+              out.print("</error>");
+              
+              int code = e instanceof java.lang.IllegalArgumentException ? 
+                HttpServletResponse.SC_BAD_REQUEST    :
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+              
+              response.setStatus(code);
               e.printStackTrace();
-            }
+          } finally {
+              //close aggregator element on finally to wrap exception
+              //if needed. 
+              if ( values.length > 1 ) {
+                if (format.equals("uchicago")) {
+                   out.print("</results>");
+                }
+                else {
+                  out.print("</dlf:collection>");
+                }
+              }
+              
+              
+              try {
+                conn.close();
+              } catch(Exception e) {
+                System.err.println("Problem closing HIP connection?");
+                e.printStackTrace();
+              }
         }
-        
-
-        out.close();
+          
+        out.close();      
     }
-    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** Handles the HTTP <code>GET</code> method.
      * @param request servlet request
@@ -339,19 +394,13 @@ public class ItemsServlet extends HttpServlet {
     
 
     
-    private int getCopies(ActionContext context, PrintWriter out, SearchKey key, String format) throws SQLException {
-
-      int rows = 0;              
-      List copies = fetchCopies(context.connection(), key);
-      
+    private void printCopies(ActionContext context, PrintWriter out, List copies, String format) throws SQLException {
       if (format.equals("uchicago")) {  
-          rows = printCopiesUchicago(context, out, copies);
+        printCopiesUchicago(context, out, copies);
       }
       else {
-        rows = printCopiesDlf(context, out, copies);
-      }
-        
-      return rows;
+        printCopiesDlf(context, out, copies);
+      }      
     }
     
     private int printCopiesDlf(ActionContext context, PrintWriter out, List copies) throws SQLException {
@@ -714,19 +763,14 @@ public class ItemsServlet extends HttpServlet {
       return result;
     }
 
-    private int getItems(ActionContext context, PrintWriter out, SearchKey key, String format)
+    private void printItems(ActionContext context, PrintWriter out, List items, String format)
     throws SQLException {
-      List items = fetchItems(context.connection(), key);
-      int rows;
-      
       if ( format.equals("uchicago") ) {                
-        rows = printItemsUchicago(context, out, items);                
+        printItemsUchicago(context, out, items);                
       }
       else {
-        rows = printItemsDlf(context, out, items);
+        printItemsDlf(context, out, items);
       }
-            
-      return rows;
     }
     
     private int printItemsUchicago(ActionContext context, PrintWriter out, List items)
@@ -816,6 +860,9 @@ public class ItemsServlet extends HttpServlet {
     public String itemStatusToDlf(String istatus) {
       return itemStatusToDlfTranslator.itemStatusToDlf(istatus);         
     }
+    
+    
+
     
 }
 
