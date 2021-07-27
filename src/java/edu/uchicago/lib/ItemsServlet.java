@@ -217,7 +217,9 @@ public class ItemsServlet extends HttpServlet {
         
         
         // Decide what to fetch from Horizon
-        if (keyStr == ItemSearchKey.itemIdParmName || keyStr == ItemSearchKey.barcodeParmName) {
+        
+        
+        if (keyStr.equals(ItemSearchKey.itemIdParmName) || keyStr.equals(ItemSearchKey.barcodeParmName)) {
           getDefault = false;
           getCopy = false;
           getItem = true;
@@ -232,7 +234,6 @@ public class ItemsServlet extends HttpServlet {
           }
         }
 
-        
         
         response.setContentType("text/xml;charset=UTF-8");
         PrintWriter out = response.getWriter();
