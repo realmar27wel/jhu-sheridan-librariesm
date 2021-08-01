@@ -35,7 +35,7 @@ public class ItemSearchKey extends SearchKey {
         keyHash.put(bibIdParmName, new KeyInfo(bibIdParmName,"bib#",INT));
         keyHash.put(copyIdParmName, new KeyInfo(copyIdParmName,"copy#",INT));
         keyHash.put(itemIdParmName, new KeyInfo(itemIdParmName,"item#",INT));
-        keyHash.put(barcodeParmName, new KeyInfo(barcodeParmName,"barcode",STRING));
+        keyHash.put(barcodeParmName, new KeyInfo(barcodeParmName,"ibarcode",STRING));
     }
 
     
