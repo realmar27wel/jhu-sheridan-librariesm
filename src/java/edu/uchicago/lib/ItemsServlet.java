@@ -487,10 +487,10 @@ public class ItemsServlet extends HttpServlet {
          (call != null ? call.mfhd852TypeIndicator() : " ") +
          "\" ind2=\" \">");
       if (location != null) {
-        writeElt(out, "marc:subfield", location, "code", "a");        
+        writeElt(out, "marc:subfield", location, "code", "b");        
       }
       if ( collection != null ) {
-        writeElt(out, "marc:subfield", collection, "code", "b");        
+        writeElt(out, "marc:subfield", collection, "code", "c");        
       }
       if ( call != null && call.prefix != null ) {
         writeElt(out, "marc:subfield", call.prefix, "code", "k");        
