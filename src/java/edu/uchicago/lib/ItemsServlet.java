@@ -271,22 +271,58 @@ public class ItemsServlet extends HttpServlet {
                 int fetchedCount = 0;
                 List copies = new ArrayList();
                 List items = new ArrayList();
+                
+                System.err.println("fetching getDefault:" + getDefault + " getCopies: " + getCopy + " getItems: " + getItem);
+                
+                System.err.println("include items? " + context.includeItems()); 
+                
                 if (getDefault) {
+                  System.err.println("inside default block");
                     copies = fetchCopies(context.connection(), key);                     
-                    if (copies.size() == 0 ) {                      
+                    if (copies.size() == 0 ) {               
+                      System.err.println("items for default block");
                       items = fetchItems(context.connection(), key);                                              
                     }
                 } else {
                     if (getCopy) {
+                      System.err.println("copy block");
                       copies = fetchCopies(context.connection(), key);                        
                     }
                     if (getItem) {
+                      System.err.println("Hereinside getitem block?");
                       items = fetchItems(context.connection(), key);                      
                     }
                 }
 
+                //Error, asking for a single bib that didn't exist? Need to check
+                //if we have no copies/items
+                boolean obj_not_exist = false;
+                if (copies.size() == 0 && items.size() == 0 ) {
+                  //If we were looking for bibs, need to do another SQL
+                  //to see if the bib exists at all. Otherwise, we already
+                  //know it doesn't exist. 
+                  if (key.field().equals("bib")) {
+
+                    String select = "SELECT bib# FROM bib WHERE bib# = ?";
+                    PreparedStatement pstmt = conn.prepareStatement(select);
+                    try {
+                      pstmt.setInt(1, key.val);
+                      ResultSet rs = pstmt.executeQuery();
+                      if (! rs.next()) {
+                        obj_not_exist = true; 
+                      }
+                    }
+                    finally {                    
+                      pstmt.close();
+                    }
+                  }
+                  else {
+                    obj_not_exist = true;
+                  }
+                }
+                
                 //intro XML 
-                if (copies.size() > 0 || items.size() > 0) {
+                if (! obj_not_exist) {
                   if ( format.equals("uchicago")) {
                     out.print("<result>\n");
                   }
@@ -313,7 +349,7 @@ public class ItemsServlet extends HttpServlet {
                 }
                 
                 //closing XML
-                if (copies.size() > 0 || items.size() > 0) {
+                if (! obj_not_exist) {
                   if (format.equals("uchicago")) {
                     out.print("</result>");
                   }
@@ -321,8 +357,9 @@ public class ItemsServlet extends HttpServlet {
                     out.print("</dlf:record>\n");                    
                   }                                
                 }
-                //no results is an error iff we had a single-id request
-                else if (values.length == 1) {                  
+                //no results is an error iff we had a single-id request and
+                //there was no object. 
+                else if (values.length == 1)  {                  
                   out.print("<error status=\"404\"><message>Object not found: " + key.field() + "=" + key.value() + "</message></error>");
                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);                                 
                 }
