@@ -154,6 +154,7 @@ public class BorrowersServlet extends HttpServlet {
             while ( iterator.hasNext() ) {
                Map b = (Map) iterator.next();
                out.print("  <borrower id=\""+  b.get("borrower#")  +"\">\n");
+               Util.writeElt(out, "pin", (String) b.get("pin"));
                Util.writeElt(out, "name", (String) b.get("name_reconstructed"));
                Util.writeElt(out, "second_id", (String) b.get("second_id"));
                Util.writeElt(out, "btype", (String) b.get("btype"));
