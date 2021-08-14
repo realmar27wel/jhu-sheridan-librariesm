@@ -271,25 +271,17 @@ public class ItemsServlet extends HttpServlet {
                 int fetchedCount = 0;
                 List copies = new ArrayList();
                 List items = new ArrayList();
-                
-                System.err.println("fetching getDefault:" + getDefault + " getCopies: " + getCopy + " getItems: " + getItem);
-                
-                System.err.println("include items? " + context.includeItems()); 
-                
-                if (getDefault) {
-                  System.err.println("inside default block");
+                                                
+                if (getDefault) {                  
                     copies = fetchCopies(context.connection(), key);                     
-                    if (copies.size() == 0 ) {               
-                      System.err.println("items for default block");
+                    if (copies.size() == 0 ) {                                     
                       items = fetchItems(context.connection(), key);                                              
                     }
                 } else {
-                    if (getCopy) {
-                      System.err.println("copy block");
+                    if (getCopy) {                      
                       copies = fetchCopies(context.connection(), key);                        
                     }
-                    if (getItem) {
-                      System.err.println("Hereinside getitem block?");
+                    if (getItem) {                      
                       items = fetchItems(context.connection(), key);                      
                     }
                 }
