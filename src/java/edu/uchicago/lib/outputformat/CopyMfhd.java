@@ -74,17 +74,19 @@ public class CopyMfhd extends CopyFormat {
           
            out.println("<marc:datafield tag=\"" + datafield + "\" ind1=\" \" ind2=\" \">");
            
+           
+           
            out.println("  <marc:subfield code=\"a\">");
            if ( displayTextFrom != null ) {
-             out.println(displayTextFrom);
+             out.println(Util.escapeXml(displayTextFrom));
            }
            if ( displayTextTo != null ) {
-             out.println(" " + displayTextTo);
+             out.println(" " + Util.escapeXml(displayTextTo));
            }
            out.println("  </marc:subfield>");
            
            if ( hNote != null ) {
-             out.println("  <marc:subfield code=\"z\">" + hNote + "</marc:subfield>");
+             out.println("  <marc:subfield code=\"z\">" + Util.escapeXml(hNote) + "</marc:subfield>");
            }
            
            out.println("</marc:datafield>");
