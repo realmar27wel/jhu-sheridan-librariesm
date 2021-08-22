@@ -39,6 +39,7 @@ public class Item {
   public String itemTypeName;
   public String itemStatusCode;
   public String itemStatusName;
+  public String publicNote;
   
   public Item(ResultSet rs) throws SQLException {
     
@@ -67,5 +68,7 @@ public class Item {
       itemTypeName = rs.getString("item_type_descr");
       itemStatusCode = rs.getString("item_status");
       itemStatusName = rs.getString("item_status_descr");
+      
+      publicNote = rs.getString("notes");
   }
 }

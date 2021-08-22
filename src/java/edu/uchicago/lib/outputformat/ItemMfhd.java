@@ -37,7 +37,8 @@ public class ItemMfhd extends ItemFormat {
     Util.writeElt(out, "marc:controlfield", new Integer(item.bibId).toString(), "tag", "004");
     
     //location, collection, call no, copy in 852
-    ItemsServlet.printMfhd852(out, item.locationName, item.collectionDescr, item.callNumber, null, new Integer(item.itemId));
+        
+    ItemsServlet.printMfhd852(out, item.locationName, item.collectionDescr, item.callNumber, item.publicNote, new Integer(item.itemId));
     out.println("</marc:record>");
 
   }

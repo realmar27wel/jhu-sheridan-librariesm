@@ -758,6 +758,7 @@ public class ItemsServlet extends HttpServlet {
           "  i.collection, c.pac_descr as collection_descr, " +
           "  i.call_reconstructed, i.call_type, ct.processor as call_type_hint, ct.descr as call_type_name, i.copy_reconstructed, "+
           "i.item_status, ist.descr as item_status_descr, i.due_date, " +
+          "i.notes, " +
           "i.due_time, staff_only, delete_flag, i.itype," +
           "  it.descr AS item_type_descr, last_status_update_date, last_update_date, " +          
           " due_date, due_time " +
