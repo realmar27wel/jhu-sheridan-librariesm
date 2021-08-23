@@ -45,8 +45,16 @@ public class ItemIlsDetails extends ItemFormat {
            if ( item.itemStatusName != null ) {
              Util.writeElt(out, "dc:title", item.itemStatusName);
            }
-         out.println("</ilsitem:itemStatus>");               
-       
+         out.println("</ilsitem:itemStatus>");    
+         
+         String localInfoStr = ItemsServlet.appProperties.getProperty("holdings.item.localInfo");
+         if (localInfoStr != null) {
+           String[] a = localInfoStr.split(",");
+           for(int i=0; i < a.length; i++) {
+             Util.writeElt(out, "ilsitem:localInfo", (String)item.localInfo.get(a[i].trim()), "key", a[i].trim());  
+           }
+         }
+         
        out.println("</ilsitem:description>");
   }
   

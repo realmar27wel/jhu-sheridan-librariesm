@@ -700,7 +700,7 @@ public class ItemsServlet extends HttpServlet {
             
             // Include subsidiary items if so configured
             if ( context.includeItems() ) {
-              List items = fetchItems(conn, new ItemSearchKey(ItemSearchKey.copyIdParmName, new Integer(copy.copyId).toString()));
+              List items = fetchItems(context.connection(), new ItemSearchKey(ItemSearchKey.copyIdParmName, new Integer(copy.copyId).toString()));
               printItemsUchicago(context, out,  items);
             }
             
@@ -752,7 +752,14 @@ public class ItemsServlet extends HttpServlet {
 
     // Close the statement when you're done with it by taking the ResultSet
     // return value rs and calling rs.getStatement().close();
-    private List fetchItems(Connection conn, SearchKey key) throws SQLException {
+    private List fetchItems(Connection conn, SearchKey key) throws SQLException {      
+      
+      String localInfoStr = ItemsServlet.appProperties.getProperty("holdings.item.localInfo");
+      String localInfoSelect = "";
+      if (localInfoStr != null)
+        localInfoSelect = "," +localInfoStr + " ";
+      
+      
       PreparedStatement pstmt = conn.prepareStatement("SELECT " + 
           " item#, copy#, bib#, i.location, l.name as location_name," +
           "  i.collection, c.pac_descr as collection_descr, " +
@@ -762,6 +769,8 @@ public class ItemsServlet extends HttpServlet {
           "i.due_time, staff_only, delete_flag, i.itype," +
           "  it.descr AS item_type_descr, last_status_update_date, last_update_date, " +          
           " due_date, due_time " +
+          localInfoSelect +
+          
         "FROM dbo.item i, dbo.location l, dbo.collection c, dbo.item_status ist, dbo.itype it, dbo.call_type ct " +
         "WHERE " +
         "      i.location *= l.location " +

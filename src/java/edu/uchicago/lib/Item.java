@@ -40,6 +40,7 @@ public class Item {
   public String itemStatusCode;
   public String itemStatusName;
   public String publicNote;
+  public Map localInfo;
   
   public Item(ResultSet rs) throws SQLException {
     
@@ -70,5 +71,18 @@ public class Item {
       itemStatusName = rs.getString("item_status_descr");
       
       publicNote = rs.getString("notes");
+      
+      localInfo = new HashMap();
+      String localInfoStr = ItemsServlet.appProperties.getProperty("holdings.item.localInfo");
+      if (localInfoStr != null) {
+        String[] a = localInfoStr.split(",");
+        for(int i=0; i < a.length; i++) {
+          localInfo.put(a[i].trim(), rs.getString(a[i].trim()));            
+        }
+      }
+
+      //localInfo.put("rmst", rs.getString("moravia_rmst"));
+      //localInfo.put("barcode", rs.getString("ibarcode"));
+      
   }
 }
