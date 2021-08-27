@@ -86,7 +86,7 @@ public class ItemsServlet extends HttpServlet {
                 e.printStackTrace();
             }
         } else {
-            //Maybe running in Tomcat and NetBeans?
+            //Maybe running in Tomcat and NetBeans? jetty?
             System.out.println("Looks like we are NOT running in HIP.");
             try {
                 ctx = new InitialContext();
@@ -99,8 +99,6 @@ public class ItemsServlet extends HttpServlet {
                 System.out.flush();
                 // ds = (DataSource) ctx.lookup( "java:/comp/env/catalog" );
                 ds = (DataSource) ctx.lookup( name );
-                System.out.println("Looking up " + name);
-                System.out.flush();
                 
                 if ( ds == null ) {
                   throw new Exception("Data source not found! : " + name);
