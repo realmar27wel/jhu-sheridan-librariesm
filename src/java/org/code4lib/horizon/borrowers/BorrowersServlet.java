@@ -83,7 +83,7 @@ public class BorrowersServlet extends HttpServlet {
                 System.out.flush();
                 // ds = (DataSource) ctx.lookup( "java:/comp/env/catalog" );
                 ds = (DataSource) ctx.lookup( name );
-                System.out.println("Looking up " + name);
+                System.out.println("Found: " + ds);
                 System.out.flush();
                 
                 if ( ds == null ) {
