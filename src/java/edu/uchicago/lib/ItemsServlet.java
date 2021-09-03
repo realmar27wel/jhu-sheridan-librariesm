@@ -371,6 +371,13 @@ public class ItemsServlet extends HttpServlet {
               response.setStatus(code);
               e.printStackTrace();
           } finally {
+              try {
+                conn.close();
+              } catch(Exception e) {
+                System.err.println("Problem closing HIP connection?");
+                e.printStackTrace();
+              }
+            
               //close aggregator element on finally to wrap exception
               //if needed. 
               if ( values.length > 1 ) {
@@ -380,15 +387,7 @@ public class ItemsServlet extends HttpServlet {
                 else {
                   out.print("</dlf:collection>");
                 }
-              }
-              
-              
-              try {
-                conn.close();
-              } catch(Exception e) {
-                System.err.println("Problem closing HIP connection?");
-                e.printStackTrace();
-              }
+              }                                          
         }
           
         out.close();      
