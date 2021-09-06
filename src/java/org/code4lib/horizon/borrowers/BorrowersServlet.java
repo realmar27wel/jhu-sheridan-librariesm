@@ -214,7 +214,9 @@ public class BorrowersServlet extends HttpServlet {
             e.printStackTrace();
         } finally {          
             try {
-              conn.close();
+              if (conn != null) {
+                conn.close();
+              }
             } catch(Exception e) {
               System.err.println("Problem closing HIP connection?");
               e.printStackTrace();
