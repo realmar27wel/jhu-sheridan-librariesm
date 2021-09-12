@@ -10,6 +10,7 @@ import java.net.*;
 
 import java.text.*;
 import java.util.*;
+import java.util.Date;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -200,6 +201,12 @@ public class ActionContext {
       }
     }  
     return copyFormats;
+  }
+  
+  public void logError(Exception e) {    
+    System.err.println((new Date()).toString() + ": Error: " + request.getRequestURL());
+    e.printStackTrace();
+    System.err.println("\n\n");
   }
   
   protected void buildFormatMap() {

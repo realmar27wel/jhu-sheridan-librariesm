@@ -239,12 +239,15 @@ public class ItemsServlet extends HttpServlet {
         
         // java.lang.System.getProperties().list(System.err);        
         
-          //We might have multiple values, split and loop 
+          //We might have multiple values, split and loop                              
           String[] values = valueStr.split(",");
+          
+          ActionContext context = null;
+          
           try {
             conn = ds.getConnection();
               
-            ActionContext context = new ActionContext(conn, request, appProperties);
+            context = new ActionContext(conn, request, appProperties);
               
 
             
@@ -367,14 +370,19 @@ public class ItemsServlet extends HttpServlet {
               int code = e instanceof java.lang.IllegalArgumentException ? 
                 HttpServletResponse.SC_BAD_REQUEST    :
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-              
+                            
               response.setStatus(code);
-              e.printStackTrace();
+              
+              if (context != null) {
+                context.logError(e);
+              } else {
+                e.printStackTrace();
+              }
           } finally {
               try {
                 conn.close();
               } catch(Exception e) {
-                System.err.println("Problem closing HIP connection?");
+                System.err.println("Problem closing JDBC connection?");
                 e.printStackTrace();
               }
             

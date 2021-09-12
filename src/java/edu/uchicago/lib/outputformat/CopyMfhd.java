@@ -98,7 +98,9 @@ public class CopyMfhd extends CopyFormat {
       e.printStackTrace();
     } finally {   
       try {
-        holdingPstmt.close();
+        if (holdingPstmt != null) {
+          holdingPstmt.close();
+        }
       }
       catch( SQLException e) {
         e.printStackTrace(); 
