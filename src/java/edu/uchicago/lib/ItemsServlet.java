@@ -37,7 +37,6 @@ public class ItemsServlet extends HttpServlet {
     private static String prefix;
     private static String realPath;
     private static DataSource ds;
-    private static Connection conn;
     
     // Parameter names
     private static String formatParmName = "format";
@@ -243,7 +242,8 @@ public class ItemsServlet extends HttpServlet {
           String[] values = valueStr.split(",");
           
           ActionContext context = null;
-          
+          Connection conn = null;
+
           try {
             conn = ds.getConnection();
               
