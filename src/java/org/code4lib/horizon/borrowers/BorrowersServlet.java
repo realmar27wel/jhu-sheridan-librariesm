@@ -31,7 +31,6 @@ public class BorrowersServlet extends HttpServlet {
     private static String prefix;
     private static String realPath;
     private static DataSource ds;
-    private static Connection conn;
     
     //will be loaded with app properties, default to system properties too.
     public static Properties appProperties = new Properties(System.getProperties());
@@ -134,7 +133,7 @@ public class BorrowersServlet extends HttpServlet {
         out.print("<?xml version='1.0' encoding='UTF-8'?>");
 
         
-        
+        Connection conn = null;
         try {
           //validate query
           if (queryConstraints.size() == 0) {
