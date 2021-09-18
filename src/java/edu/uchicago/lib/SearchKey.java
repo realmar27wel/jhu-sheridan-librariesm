@@ -73,8 +73,13 @@ public class SearchKey {
                 // sanitize value string for use in SQL, allow for some variations in dummy barcodes
                 // Any better ideas?
                 // IDEA: move sanitizing up a level, to the calling environment.
-                String saneChars = ".abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-                this.value = Util.cleanUp(value,saneChars, true);
+                //NO NO NO: This was causing bugs with barcodes or other values
+                // that included punctuation. The right answer is to use actual
+                // JDBC calls with bound paramters that will escape things for us!
+                // I believe we do so now, I hope. 
+                //String saneChars = ".abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                //this.value = Util.cleanUp(value,saneChars, true);
+                this.value = value;
             } else {
                 throw new RuntimeException("Impossible colType: " + this.keyInfo.colType);
             }
