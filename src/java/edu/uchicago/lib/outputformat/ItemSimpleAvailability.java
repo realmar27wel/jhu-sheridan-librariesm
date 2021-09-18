@@ -33,7 +33,7 @@ public class ItemSimpleAvailability extends ItemFormat {
       out.println("  <dlf:location>" + Util.escapeXml(item.locationName) + " -- " + Util.escapeXml(item.collectionDescr) );      
       String callLabel = item.callNumber.simpleCallLabel();
       if ( callLabel != null ) {
-          out.println(": " + callLabel);
+          out.println(": " + Util.escapeXml(callLabel));
       }
       out.println("</dlf:location>");
       
