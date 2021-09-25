@@ -23,7 +23,7 @@ public class BorrowerSearchKey extends edu.uchicago.lib.SearchKey {
       keyHash.put("id", new KeyInfo("id","dbo.borrower.borrower#",INT));
       keyHash.put("second_id", new KeyInfo("second_id","dbo.borrower.second_id",STRING));
       keyHash.put("barcode", new KeyInfo("barcode","dbo.borrower_barcode.bbarcode",STRING, " INNER JOIN dbo.borrower_barcode ON dbo.borrower.borrower# = dbo.borrower_barcode.borrower# " ));  
-      keyHash.put("pin", new KeyInfo("pin", "dbo.borrower.pin", STRING));
+      keyHash.put("pin", new KeyInfo("pin", "dbo.borrower.pin#", STRING));
       keyHash.put("other_id", new KeyInfo("other_id", "dbo.borrower_note.other_id", STRING, " INNER JOIN dbo.borrower_note ON dbo.borrower.borrower# = dbo.borrower_note.borrower# "));
     }
   
