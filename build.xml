@@ -3,7 +3,6 @@
   
   <property name="jboss.location" value="/data/dynix/hzapp/jboss"/>
   
-  <property name="javax.jar" value="${jboss.location}/server/default/lib/javax.servlet.jar"/>
   <property name="war.installdir" value="${jboss.location}/server/default/deploy/" />
   
   <property name="war.name" value="ws.war"/>
