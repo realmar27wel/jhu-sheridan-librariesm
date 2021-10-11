@@ -731,7 +731,7 @@ public class ItemsServlet extends HttpServlet {
                 + "and c.media_type *= mt.media_type "
                 + "and c.itype *= it.itype "
                 + "and c.call_type *= ct.call_type "
-                //+ "and staff_only != 1 "
+                + "and staff_only != 1 "
                 + "and c." + key.column() + " = ?";
         
 
@@ -779,8 +779,8 @@ public class ItemsServlet extends HttpServlet {
         "  AND i.item_status *= ist.item_status " +
         "  AND i.itype *= it.itype " +
         "  AND i.call_type *= ct.call_type " +
-        "  AND i." + key.column() + " = ?" + " "); // +
-        //"  AND i.staff_only=0");
+        "  AND i." + key.column() + " = ?" +
+        "  AND i.staff_only=0");
       ArrayList result = new ArrayList();
       try {
         if ( key.colType() == SearchKey.INT) {
