@@ -1,16 +1,8 @@
-# Full or Items-only #
-
-The full version of the servlet includes an items service and a borrowers service. You can also install a version with only the items service.
-
-If you install the full version, ws.jar, services will be available at /ws/holdings and /ws/borrowers. **Be sure to see [BorrowerInfo#Security\_Issues](BorrowerInfo#Security_Issues.md)** to properly protect the borrower service.
-
-If you install the items-only version, items.jar, services will be available at /items.
-
 # Pre-requisites #
 
-I use this servlet by directly installing it in the HIP JBoss (meaning Java 1.4.2 because that's what HIP runs) on a unix machine.
-
-It should probably work a) on Windows, b) in your own Jboss/Tomcat/etc servlet environment, rather than in HIP's, and/or c) with more recent versions of Java. But I have not tested that, and am not sure what it would entail. But if there are initial problems, we can probably get them solved.
+The war file is currently deployed on a jetty server. It should also work on any other java server container such as Tomcat. 
+It requires java 1.8 or above. 
+All required libraries can be found in the `pom.xml` file. 
 
 # Install Already Built Servlet #
 
