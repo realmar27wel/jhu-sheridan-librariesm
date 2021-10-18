@@ -1,4 +1,6 @@
 A Java servlet which provides web services for accessing information from the Horizon ILS.
+ - Borrower Info
+ - Holdings Info
 
 The main service provided is item information for Horizon ILS items in DLF ils-di (dlfexpanded) 
 format, among other formats.
