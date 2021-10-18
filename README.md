@@ -36,3 +36,11 @@ mvn jetty:run
 ```
 
 You may also set it up in IntelliJ to run the command in debug mode to use it with a debugger. 
+
+
+Test the interface using 
+```
+curl -i localhost:8080/ws/borrowers/?other_id=<jhed>
+curl -i localhost:8080/ws/borrowers/?barcode=<barcode>
+curl -i localhost:8080/ws/borrowers/?second_id=<hopkins_id>
+```
